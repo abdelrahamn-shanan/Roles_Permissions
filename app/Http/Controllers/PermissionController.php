@@ -50,7 +50,7 @@ class PermissionController extends Controller
 
     public function destroy($id)
     {
-        $permission = Permission::findO($id);
+        $permission = Permission::find($id);
 
         if(!$permission){
             return redirect()->route('permissions.index')->with('error', 'Permission not found.');
