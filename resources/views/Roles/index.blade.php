@@ -24,6 +24,7 @@
                                 <tr>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">#</th>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">Name</th>
+                                    <th class="px-6 py-3 border text-left text-sm font-medium">permissions</th>
                                     <th class="px-6 py-3 border text-center text-sm font-medium">Actions</th>
                                 </tr>
                             </thead>
@@ -32,16 +33,22 @@
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 border">{{ $role->id }}</td>
                                         <td class="px-6 py-4 border">{{ $role->name }}</td>
+                                        <td class="px-6 py-4 border">
+                                            @foreach($role->permissions as $permission)
+                                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1">
+                                                    {{ $permission->name }}
+                                                </span>
+                                            @endforeach
                                         <td class="px-6 py-4 border text-center flex justify-center items-center gap-2">
 
                                             {{-- Edit Button --}}
-                                            <a href=""  
+                                            <a href="{{ route('roles.edit', $role->id) }}"  
                                             class="px-4 py-2 bg-green-600 text-blue text-sm font-medium rounded-lg shadow hover:bg-green-700 transition">
                                                 Edit
                                             </a>
                                             
                                             {{-- Delete Form --}}
-                                            <form action="" 
+                                            <form action="{{ route('roles.destroy', $role->id) }}" 
                                                 method="POST" 
                                                 class="inline-block"
                                                 onsubmit="return confirm('Are you sure you want to delete this permission?');">
@@ -65,6 +72,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-4">
+                        {{ $roles->links() }}
                     </div>
 
                 </div>

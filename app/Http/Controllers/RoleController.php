@@ -11,7 +11,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::orderBy('name','DESC')->paginate(10);
         return view('roles.index', compact('roles'));
     }
 
@@ -29,4 +29,36 @@ class RoleController extends Controller
 
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');
     }
+
+    public function edit($id)
+    {
+        $role = Role::find($id);
+
+        if(!$role){
+            return redirect()->route('roles.index')->with('error', 'Role not found.');
+        }
+    
+        $permissions = Permission::orderBy('name','DESC')->get();
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
+        return view('roles.edit', compact('role', 'permissions', 'rolePermissions'));
+    }
+
+    public function update(RoleRequest $request, $id)
+    { 
+        $role = Role::find($id);
+        if(!$role){
+            return redirect()->route('roles.index')->with('error', 'Role not found.');
+        }
+        $role->update(['name' => $request->name]);
+        $permissions = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
+        $role->syncPermissions($permissions);
+        return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
+    }
+
+    public function destroy(Role $role)
+    {
+        $role->delete();
+        return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+    }
+
 }
