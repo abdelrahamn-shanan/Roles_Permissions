@@ -26,7 +26,7 @@
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                                 @foreach($permissions as $permission)
                                     <label class="flex items-center space-x-2">
-                                        <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" 
+                                        <input type="checkbox" name="permissions[]" value="{{ $permission->id }}" 
                                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                                {{ in_array($permission->id, old('permissions', [])) ? 'checked' : '' }}>
                                         <span>{{ $permission->name }}</span>
