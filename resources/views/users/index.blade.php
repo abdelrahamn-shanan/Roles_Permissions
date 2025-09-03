@@ -4,8 +4,6 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Users') }}
             </h2>
-
-            <a href="{{ route('users.create') }}" class="px-4 py-2 bg-green-600 text-green text-sm font-medium rounded-lg shadow hover:bg-green-700 transition"> + Create users </a>
         </div>
     </x-slot>
 
@@ -25,6 +23,7 @@
                                     <th class="px-6 py-3 border text-left text-sm font-medium">#</th>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">Name</th>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">Email</th>
+                                    <th class="px-6 py-3 border text-left text-sm font-medium">Roles</th>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">Created</th>
                                     <th class="px-6 py-3 border text-center text-sm font-medium">Actions</th>
                                 </tr>
@@ -35,6 +34,12 @@
                                         <td class="px-6 py-4 border">{{ $user->id }}</td>
                                         <td class="px-6 py-4 border">{{ $user->name }}</td>
                                         <td class="px-6 py-4 border">{{ $user->email }}</td>
+                                        <td class="px-6 py-4 border">
+                                            @foreach($user->roles as $role)
+                                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1">
+                                                    {{ $role->name }}
+                                                </span>
+                                            @endforeach
                                         <td class="px-6 py-4 border">{{ $user->created_at->format('d M Y') }}</td>
                                         <td class="px-6 py-4 border text-center flex justify-center items-center gap-2">
 
@@ -69,6 +74,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        {{ $users->links() }} {{-- Pagination links --}}
                     </div>
 
                 </div>
