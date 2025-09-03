@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ArticleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,6 +33,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
     Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    
+
+    /**Articles */
+    Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
+    Route::get('/articles/create', [ArticleController::class, 'create'])->name('articles.create');
+    Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+    Route::get('/articles/{role}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+    Route::put('/articles/{role}', [ArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{role}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+
 
 
 });
