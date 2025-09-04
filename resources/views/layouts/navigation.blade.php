@@ -18,25 +18,40 @@
                 </div>
 
                 <!-- Navigation Links -->
+                 @can('view permission')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.index')">
                         {{ __('Permissions') }}
                     </x-nav-link>
                 </div>
+                @endcan
 
                 <!-- Navigation Links -->
+                 @can('view role')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')">
                         {{ __('Roles') }}
                     </x-nav-link>
                 </div>
+                @endcan
 
-                                <!-- Navigation Links -->
+                <!-- Navigation Links -->
+                @can('view article')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.index')">
                         {{ __('Articles') }}
                     </x-nav-link>
                 </div>
+                @endcan
+
+                <!-- Navigation Links -->
+                 @can('view user')
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                        {{ __('users') }}
+                    </x-nav-link>
+                </div>
+                @endcan
             </div>
 
             <!-- Settings Dropdown -->
@@ -44,7 +59,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->name }} ({{ Auth::user()->roles->pluck('name')->implode(', ') }})</div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

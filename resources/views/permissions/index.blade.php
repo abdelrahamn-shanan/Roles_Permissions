@@ -5,7 +5,9 @@
                 {{ __('Permissions') }}
             </h2>
 
+            @can('add permission')
             <a href="{{ route('permissions.create') }}" class="px-4 py-2 bg-green-600 text-green text-sm font-medium rounded-lg shadow hover:bg-green-700 transition"> + Create Permission </a>
+            @endcan
         </div>
     </x-slot>
 
@@ -35,12 +37,15 @@
                                         <td class="px-6 py-4 border text-center flex justify-center items-center gap-2">
 
                                             {{-- Edit Button --}}
+                                            @can('edit permission')
                                             <a href="{{ route('permissions.edit', $permission->id) }}"  
                                             class="px-4 py-2 bg-green-600 text-blue text-sm font-medium rounded-lg shadow hover:bg-green-700 transition">
                                                 Edit
                                             </a>
+                                            @endcan
                                             
                                             {{-- Delete Form --}}
+                                            @can('delete permission')
                                             <form action="{{ route('permissions.destroy', $permission->id) }}" 
                                                 method="POST" 
                                                 class="inline-block"
@@ -52,6 +57,7 @@
                                                     Delete
                                                 </button>
                                             </form>
+                                            @endcan
 
                                         </td>
 

@@ -2,11 +2,10 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Articles') }}
+                {{ __('Users') }}
             </h2>
-
-            @can('add article')
-            <a href="{{ route('articles.create') }}" class="px-4 py-2 bg-green-600 text-green text-sm font-medium rounded-lg shadow hover:bg-green-700 transition"> + Create Article </a>
+            @can('add user')
+            <a href="{{ route('users.create') }}" class="px-4 py-2 bg-green-600 text-green text-sm font-medium rounded-lg shadow hover:bg-green-700 transition"> + Create User </a>
             @endcan
         </div>
     </x-slot>
@@ -19,40 +18,45 @@
                     {{-- Messages --}}
                     <x-messages />
 
-                    {{-- Articles Table --}}
+                    {{-- users Table --}}
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse border border-gray-200 rounded-lg">
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">#</th>
-                                    <th class="px-6 py-3 border text-left text-sm font-medium">title</th>
-                                    <th class="px-6 py-3 border text-left text-sm font-medium">text</th>
-                                    <th class="px-6 py-3 border text-left text-sm font-medium">Author</th>
+                                    <th class="px-6 py-3 border text-left text-sm font-medium">Name</th>
+                                    <th class="px-6 py-3 border text-left text-sm font-medium">Email</th>
+                                    <th class="px-6 py-3 border text-left text-sm font-medium">Roles</th>
                                     <th class="px-6 py-3 border text-left text-sm font-medium">Created</th>
                                     <th class="px-6 py-3 border text-center text-sm font-medium">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                @forelse ($articles as $article)
+                                @forelse ($users as $user)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 border">{{ $article->id }}</td>
-                                        <td class="px-6 py-4 border">{{ $article->title }}</td>
-                                        <td class="px-6 py-4 border">{{ $article->text }}</td>
-                                        <td class="px-6 py-4 border">{{ $article->author }}</td>
-                                        <td class="px-6 py-4 border">{{ $article->created_at->format('Y-m-d') }}</td>
-                                    
+                                        <td class="px-6 py-4 border">{{ $user->id }}</td>
+                                        <td class="px-6 py-4 border">{{ $user->name }}</td>
+                                        <td class="px-6 py-4 border">{{ $user->email }}</td>
+                                        <td class="px-6 py-4 border">
+                                            @foreach($user->roles as $role)
+                                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1">
+                                                    {{ $role->name }}
+                                                </span>
+                                            @endforeach
+                                        <td class="px-6 py-4 border">{{ $user->created_at->format('d M Y') }}</td>
                                         <td class="px-6 py-4 border text-center flex justify-center items-center gap-2">
 
                                             {{-- Edit Button --}}
-                                            @can('edit article')
-                                            <a href="{{ route('articles.edit', $article->id) }}"  
+                                            @can('edit user')
+                                            <a href="{{ route('users.edit', $user->id) }}"  
                                             class="px-4 py-2 bg-green-600 text-blue text-sm font-medium rounded-lg shadow hover:bg-green-700 transition">
                                                 Edit
                                             </a>
                                             @endcan
+                                            
                                             {{-- Delete Form --}}
-                                            @can('delete article')
-                                            <form action="{{ route('articles.destroy', $article->id) }}" 
+                                            @can('delete user')
+                                            <form action="{{ route('users.destroy', $user->id) }}" 
                                                 method="POST" 
                                                 class="inline-block"
                                                 onsubmit="return confirm('Are you sure you want to delete this permission?');">
@@ -71,14 +75,13 @@
                                 @empty
                                     <tr>
                                         <td colspan="3" class="px-6 py-4 text-center text-gray-500">
-                                            No articles found.
+                                            No users found.
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        <div class="mt-4">
-                            {{ $articles->links() }}
+                        {{ $users->links() }} {{-- Pagination links --}}
                     </div>
 
                 </div>
