@@ -44,12 +44,15 @@
                                         <td class="px-6 py-4 border text-center flex justify-center items-center gap-2">
 
                                             {{-- Edit Button --}}
+                                            @can('edit user')
                                             <a href="{{ route('users.edit', $user->id) }}"  
                                             class="px-4 py-2 bg-green-600 text-blue text-sm font-medium rounded-lg shadow hover:bg-green-700 transition">
                                                 Edit
                                             </a>
+                                            @endcan
                                             
                                             {{-- Delete Form --}}
+                                            @can('delete user')
                                             <form action="{{ route('users.destroy', $user->id) }}" 
                                                 method="POST" 
                                                 class="inline-block"
@@ -61,6 +64,7 @@
                                                     Delete
                                                 </button>
                                             </form>
+                                            @endcan
 
                                         </td>
 

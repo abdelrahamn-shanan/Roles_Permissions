@@ -5,9 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ArticleController extends Controller
+
+
+class ArticleController extends Controller implements HasMiddleware
 {
+
+    /**
+     * Apply permissions middleware to controller methods
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view article', only: ['index']),
+            new Middleware('permission:add article', only: ['create','store']),
+            new Middleware('permission:edit article', only: ['edit','update']),
+            new Middleware('permission:delete article', only: ['destroy']),
+        ];
+    }
+
+
     /**
      * Display a listing of the resource.
      */
