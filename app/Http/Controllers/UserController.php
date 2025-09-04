@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Http\Requests\CreatedUserRequest;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -36,15 +37,31 @@ class UserController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        //
+        $roles = Role::all();
+        return view('users.create', compact('roles'));
+        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreatedUserRequest $request)
     {
-        //
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
+
+            $roles = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
+            $user->assignRole($roles);
+
+            return redirect()->route('users.index')->with('success', 'User created successfully.');
+        } catch (\Exception $e) { 
+            return redirect()->route('users.index')->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+        
     }
 
     /**
@@ -91,6 +108,15 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                return redirect()->route('users.index')->with('error', 'User not found.');
+            }
+            $user->delete();
+            return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        } catch (\Exception $e) { 
+            return redirect()->route('users.index')->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 }
