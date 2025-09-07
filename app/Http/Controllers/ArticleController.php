@@ -7,12 +7,18 @@ use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-
+use App\Services\ArticleService;
 
 
 class ArticleController extends Controller implements HasMiddleware
 {
 
+    protected $articleService;
+
+    public function __construct(ArticleService $articleService)
+    {
+        $this->articleService = $articleService;
+    }
     /**
      * Apply permissions middleware to controller methods
      */
@@ -32,7 +38,7 @@ class ArticleController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $articles = Article::paginate(10);
+        $articles = $this->articleService->getAllPaginated(10);
         return view('articles.index', compact('articles'));
     }
 
@@ -49,7 +55,7 @@ class ArticleController extends Controller implements HasMiddleware
      */
     public function store(ArticleRequest $request)
     {
-        Article::create($request->validated());
+        $this->articleService->create($request->validated());
         return redirect()->route('articles.index')->with('success', 'Article created successfully.');
         
     }
@@ -59,7 +65,9 @@ class ArticleController extends Controller implements HasMiddleware
      */
     public function edit( $id)
     {
-        $article = Article::find($id);
+
+        $article = $this->articleService->find($id);
+;
         if (!$article) {
             return redirect()->route('articles.index')->with('error', 'Article not found.');
         }
@@ -73,12 +81,11 @@ class ArticleController extends Controller implements HasMiddleware
      */
     public function update(ArticleRequest $request,  $id)
     {
-        $article = Article::find($id);
+        $article = $this->articleService->find($id);
         if (!$article) {
             return redirect()->route('articles.index')->with('error', 'Article not found.');
         }
-
-        $article->update($request->validated());
+        $this->articleService->update($id, $request->validated());
         return redirect()->route('articles.index')->with('success', 'Article updated successfully.');
         
     }
@@ -88,12 +95,12 @@ class ArticleController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $article = Article::find($id);
+        $article = $this->articleService->find($id);
         if (!$article) {
             return redirect()->route('articles.index')->with('error', 'Article not found.');
         }
 
-        $article->delete();
+        $this->articleService->delete($id);
         return redirect()->route('articles.index')->with('success', 'Article deleted successfully.');
     }
 }
