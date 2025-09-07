@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\PermissionRequest;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Services\PermissionService;
 
 class PermissionController extends Controller implements HasMiddleware
 {
+    protected $permissionService;
+
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
 
     public static function middleware(): array
     {
@@ -25,7 +31,7 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $permissions = Permission::all();
+        $permissions = $this->permissionService->getAllPaginated(10);
         return view('permissions.index', compact('permissions'));
     }
 
@@ -36,16 +42,14 @@ class PermissionController extends Controller implements HasMiddleware
 
     public function store(PermissionRequest $request)
     {
-
-        Permission::create($request->only('name'));
-
+        $this->permissionService->create($request->only('name'));
         return redirect()->route('permissions.index')->with('success', 'Permission created successfully.');
     }
 
 
     public function edit($id)
     {
-        $permission = Permission::find($id);
+        $permission = $this->permissionService->find($id);
 
         if(!$permission){
             return redirect()->route('permissions.index')->with('error', 'Permission not found.');
@@ -56,7 +60,8 @@ class PermissionController extends Controller implements HasMiddleware
 
     public function update(PermissionRequest $request , $id)
     {
-        $permission = Permission::findOrFail($id);
+        $permission = $this->permissionService->find($id);
+
         $permission->update($request->only('name'));
 
         return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
@@ -65,14 +70,11 @@ class PermissionController extends Controller implements HasMiddleware
 
     public function destroy($id)
     {
-        $permission = Permission::find($id);
-
+        $permission = $this->permissionService->find($id);
         if(!$permission){
             return redirect()->route('permissions.index')->with('error', 'Permission not found.');
         }
-        
-        $permission->delete();
-
+        $this->permissionService->delete($id);
         return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully.');
     }
 }
