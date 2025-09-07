@@ -1,16 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Http\Requests\CreatedUserRequest;
+use App\Services\UserService;
 
 class UserController extends Controller implements HasMiddleware
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
 
     public static function middleware(): array
     {
@@ -27,7 +33,8 @@ class UserController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $users = User::latest()->paginate(10);
+        $users = $this->userService->getAllUsers(10);
+
         return view('users.index', compact('users'));
         
     }
@@ -37,7 +44,8 @@ class UserController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        $roles = Role::all();
+        $roles = $this->userService->getAllRoles();
+       
         return view('users.create', compact('roles'));
         
     }
@@ -48,14 +56,7 @@ class UserController extends Controller implements HasMiddleware
     public function store(CreatedUserRequest $request)
     {
         try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-            ]);
-
-            $roles = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
-            $user->assignRole($roles);
+            $this->userService->createUser($request->validated());
 
             return redirect()->route('users.index')->with('success', 'User created successfully.');
         } catch (\Exception $e) { 
@@ -69,11 +70,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function edit($user)
     {
-        $user = User::find($user);
+        $user = $this->userService->findUser($user);
         if (!$user) {
             return redirect()->route('users.index')->with('error', 'User not found.');
         }
-        $roles = Role::all();
+        $roles = $this->userService->getAllRoles();
         $hasRoles = $user->roles->pluck('id')->toArray();
         return view('users.edit', compact('user','roles', 'hasRoles'));
         
@@ -85,17 +86,10 @@ class UserController extends Controller implements HasMiddleware
     public function update(UserRequest $request, $id)
     { 
         try {
-            $user = User::find($id);
+            $user = $this->userService->updateUser($id , $request->validated());
             if (!$user) {
                 return redirect()->route('users.index')->with('error', 'User not found.');
             }
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-            ]);
-
-            $roles = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
-            $user->syncRoles($roles);
 
             return redirect()->route('users.index')->with('success', 'User roles updated successfully.');
         } catch (\Exception $e) { 
@@ -109,11 +103,10 @@ class UserController extends Controller implements HasMiddleware
     public function destroy(string $id)
     {
         try {
-            $user = User::find($id);
-            if (!$user) {
+            $deleted = $this->userService->deleteUser($id);
+            if (!$deleted) {
                 return redirect()->route('users.index')->with('error', 'User not found.');
             }
-            $user->delete();
             return redirect()->route('users.index')->with('success', 'User deleted successfully.');
         } catch (\Exception $e) { 
             return redirect()->route('users.index')->with('error', 'An error occurred: ' . $e->getMessage());
