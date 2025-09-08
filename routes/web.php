@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
+use App\Services\MailService;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,5 +58,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/send-notification', [NotificationController::class, 'sendNotification'])->name('send.notification');
 
 });
+
+Route::get('/test-service', function () {
+    $service1 = app(MailService::class);
+    $service2 = app(MailService::class);
+
+    dd($service1 === $service2);
+});
+
+Route::get('/test-facade', [NotificationController::class, 'testFacade'])->name('send.notification');
 
 require __DIR__.'/auth.php';

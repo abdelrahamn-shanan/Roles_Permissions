@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => [
+    // Laravel's built-in facades...
+    'App' => Illuminate\Support\Facades\App::class,
+    'Auth' => Illuminate\Support\Facades\Auth::class,
+    // ...
+
+    // ✅ Your custom facade
+    'MailService' => App\Facades\MailServiceFacade::class,
+],
+
 ];
