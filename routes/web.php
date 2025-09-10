@@ -66,6 +66,8 @@ Route::get('/test-service', function () {
     dd($service1 === $service2);
 });
 
-Route::get('/test-facade', [NotificationController::class, 'testFacade'])->name('send.notification');
+Route::get('test', function () {
+    return App\Models\User::all();
+});
 
 require __DIR__.'/auth.php';
