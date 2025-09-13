@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMarkdownMail;
 
 
 class AuthenticatedSessionController extends Controller
@@ -33,12 +34,10 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        try {
-            Mail::to($request->email)->send(new WelcomeMail($user));
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
+        //Mail::to($request->email)->send(new WelcomeMail($user));
 
+        Mail::to($request->email)->send(new WelcomeMarkdownMail($user));
+    
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
