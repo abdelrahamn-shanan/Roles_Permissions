@@ -32,11 +32,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = Auth::user();
+        $user = Auth::user()->toArray();
 
         //Mail::to($request->email)->send(new WelcomeMail($user));
 
-        Mail::to($request->email)->send(new WelcomeMarkdownMail($user));
+        //Mail::to($request->email)->send(new WelcomeMarkdownMail($user));
+
+        Mail::send('emails.mailwelcome', $user, function ($message) {
+            $message->to('recipient@example.com')
+                    ->subject('Test Email from Mail Facade');
+        });
     
         return redirect()->intended(route('dashboard', absolute: false));
     }
