@@ -8,6 +8,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMarkdownMail;
+use App\Notifications\WelcomeNotification;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,6 +33,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+        //Mail::to($request->email)->send(new WelcomeMail($user));
+
+        //Mail::to($request->email)->send(new WelcomeMarkdownMail($user));
+
+        /*Mail::send('emails.mailwelcome', $user, function ($message) {
+            $message->to('recipient@example.com')
+                    ->subject('Test Email from Mail Facade');
+        });*/
+
+        $user->notify(new WelcomeNotification($user));
+
+    
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
