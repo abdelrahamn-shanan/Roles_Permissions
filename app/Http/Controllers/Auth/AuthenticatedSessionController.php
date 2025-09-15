@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMarkdownMail;
 use App\Notifications\WelcomeNotification;
 use App\Jobs\SendWelcomeEmailJob;
+use App\Events\UserLoggedIn;
 
 
 class AuthenticatedSessionController extends Controller
@@ -48,6 +49,10 @@ class AuthenticatedSessionController extends Controller
         $user->notify(new WelcomeNotification($user));
 
         SendWelcomeEmailJob::dispatch($user)->delay(now()->addSeconds(2));
+
+        UserLoggedIn::dispatch($user);
+
+        
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
