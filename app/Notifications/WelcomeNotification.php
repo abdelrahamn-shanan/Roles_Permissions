@@ -26,13 +26,13 @@ class WelcomeNotification extends Notification
      */
     public function via($notifiable): array
     {
-        return ['mail']; // we want to send email
+        return ['database']; // we want to send email
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail($notifiable): MailMessage
+    /*public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
                     ->subject('Welcome to Our App')
@@ -41,5 +41,19 @@ class WelcomeNotification extends Notification
                     ->line('Thank you for joining us!')
                     ->action('Visit Our Website', url('/'))
                     ->line('Best regards, Laravel Team');
+    }*/
+
+
+    /**
+     * Get the array representation of the notification.
+     */
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'user_id' => $this->user->id,
+            'name'   => $this->user->name,
+            'message'  => 'You are welcome to our application!',
+         ];
+
     }
 }
