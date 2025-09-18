@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Event;
 use App\Events\UserLoggedIn;
 use App\Listeners\SendWelcomeEmail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,5 +33,16 @@ class AppServiceProvider extends ServiceProvider
             UserLoggedIn::class,
             [SendWelcomeEmail::class, 'handle']
         );
+
+
+        Str::macro('loggedUserName', function () {
+            $user = Auth::user();
+
+            if ($user && $user->name) {
+                return strtolower($user->name);
+            }
+
+            return 'GUEST';
+       });
     }
 }
